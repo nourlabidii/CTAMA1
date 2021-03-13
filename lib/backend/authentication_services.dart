@@ -1,28 +1,42 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 
 class AuthenticationService {
-  final FirebaseAuth _firebaseAuth;
-  AuthenticationService(this._firebaseAuth);
+  final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
+
   Stream<User> get authStateChanges => _firebaseAuth.authStateChanges();
 
-  Future<String> signIn({String email, String password}) async {
+// THIS FUNCTION RETURN A BOOLEAN VALUE TRUE IF signIn get SUCCESS OTHERWISE RETURN FALSE
+  Future<bool> signIn({String email, String password}) async {
     try {
       await _firebaseAuth.signInWithEmailAndPassword(
           email: email, password: password);
-
-      return "Signed in";
+      return true;
     } on FirebaseAuthException catch (e) {
-      return e.message;
+      print(e.message);
+      return false;
     }
   }
 
-  Future<String> signUp({String email, String password}) async {
+// THIS FUNCTION RETURN A BOOLEAN VALUE TRUE IF signup SUCCESS OTHERWISE RETURN FALSE
+  Future<bool> signUp({String email, String password}) async {
     try {
       await _firebaseAuth.createUserWithEmailAndPassword(
           email: email, password: password);
-      return "signed up";
+      return true;
     } on FirebaseAuthException catch (e) {
-      return e.message;
+      print(e.message);
+      return false;
+    }
+  }
+
+  Future<bool> signOut() async {
+    try {
+      await _firebaseAuth.signOut();
+      return true;
+    } on FirebaseAuthException catch (e) {
+      print(e.message);
+      return false;
     }
   }
 }

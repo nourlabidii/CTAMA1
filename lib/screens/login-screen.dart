@@ -15,14 +15,17 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   GlobalKey<FormState> formkey = GlobalKey<FormState>();
 
-  final TextEditingController emailController = TextEditingController();
-  final TextEditingController passwordController = TextEditingController();
+  final AuthenticationService authenticationService =
+      AuthenticationService(); // create a auth... instance here
+  String email;
+  String password;
 
-  void validate() {
+  void validate() async {
     if (formkey.currentState.validate()) {
-      context.read<AuthenticationService>().signIn(
-          email: emailController.text.trim,
-          password: passwordController.text.trim());
+      formkey.currentState.save();
+      authenticationService
+          .signIn(email: email, password: password)
+          .then((value) => print(value ? "success" : "fail"));
     } else {
       print("not validated");
     }
@@ -57,6 +60,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
                     TextInputField(
+                        onSaved: (String myemail) => email = myemail,
                         icon: FontAwesomeIcons.envelope,
                         hint: 'Email',
                         inputType: TextInputType.emailAddress,
@@ -69,6 +73,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                   "Veuillez saisir une adresse mail valide"),
                         ])),
                     PasswordInput(
+                        onSaved: (String mypass) => password = mypass,
                         icon: FontAwesomeIcons.lock,
                         hint: 'Mot De Passe',
                         inputAction: TextInputAction.done,

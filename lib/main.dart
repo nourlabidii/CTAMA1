@@ -14,40 +14,43 @@ Future<void> main() async {
 }
 
 class MyApp extends StatelessWidget {
+  final AuthenticationService authenticationService = AuthenticationService();
+
   @override
   Widget build(BuildContext context) {
-    return MultiProvider(
-      providers: [
-        Provider<AuthenticationService>(
-          create: (_) => AuthenticationService(FirebaseAuth.instance),
-        ),
-        StreamProvider(
-          create: (context) =>
-              context.read<AuthenticationService>().authStateChanges,
-        ),
-      ],
-      child: MaterialApp(
-        title: 'CTAMA',
-        theme: ThemeData(
-          textTheme:
-              GoogleFonts.josefinSansTextTheme(Theme.of(context).textTheme),
-          primarySwatch: Colors.blue,
-          visualDensity: VisualDensity.adaptivePlatformDensity,
-        ),
-        home: AuthenticationWrapper(),
+    return MaterialApp(
+      title: 'CTAMA',
+      theme: ThemeData(
+        textTheme:
+            GoogleFonts.josefinSansTextTheme(Theme.of(context).textTheme),
+        primarySwatch: Colors.blue,
+        visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
+      home: AuthenticationWrapper(),
     );
   }
 }
 
 class AuthenticationWrapper extends StatelessWidget {
-  const AuthenticationWrapper({Key key}) : super(key: key);
+  AuthenticationWrapper({Key key}) : super(key: key);
+
+  final AuthenticationService authenticationService = AuthenticationService();
+
   @override
   Widget build(BuildContext context) {
-    final FirebaseUser = context.watch<User>();
-    if (FirebaseUser != null) {
-      return Homepage();
-    }
-    return LoginScreen();
+    // here is the important part we
+    //will listen for user changes if user become null the screen navigate to LOgin screen else
+    // navigate to HOME PAGE and stay there until user change value to null
+    authenticationService.authStateChanges.listen((user) {
+      WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+        Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(
+                builder: (cntx) => user != null ? Homepage() : LoginScreen()),
+            (dynamic route) => false);
+      });
+    });
+
+    return Center(child: CircularProgressIndicator());
   }
 }

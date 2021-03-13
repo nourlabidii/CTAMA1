@@ -14,15 +14,18 @@ class CreateNewAccount extends StatefulWidget {
 
 class _CreateNewAccountState extends State<CreateNewAccount> {
   var confirmPass;
-
+  final AuthenticationService authenticationService = AuthenticationService();
   String password = '';
   String email = '';
   String error = '';
   GlobalKey<FormState> formkey = GlobalKey<FormState>();
 
-  void validate1() {
+  void validate1() async {
     if (formkey.currentState.validate()) {
-      print("validated");
+      formkey.currentState.save();
+      authenticationService
+          .signUp(email: email, password: password)
+          .then((value) => print(value ? "success" : "fail"));
     } else {
       print("not validated");
     }
@@ -103,9 +106,7 @@ class _CreateNewAccountState extends State<CreateNewAccount> {
                           hint: 'Email',
                           inputType: TextInputType.emailAddress,
                           inputAction: TextInputAction.next,
-                          onSaved: (val) {
-                            setState(() => email = val);
-                          },
+                          onSaved: (String myemail) => email = myemail,
                           validator: MultiValidator([
                             RequiredValidator(
                                 errorText: "Veuillez saisir une adresse mail"),
@@ -114,6 +115,7 @@ class _CreateNewAccountState extends State<CreateNewAccount> {
                                     "Veuillez saisir une adresse mail valid"),
                           ])),
                       PasswordInput(
+                        onSaved: (String mypass) => password = mypass,
                         icon: FontAwesomeIcons.lock,
                         hint: 'Mot de passe',
                         inputAction: TextInputAction.next,
