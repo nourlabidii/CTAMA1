@@ -1,5 +1,8 @@
+import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class AuthenticationService {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
@@ -39,4 +42,6 @@ class AuthenticationService {
       return false;
     }
   }
+
+  User getCurrentUser() => _firebaseAuth.currentUser;
 }

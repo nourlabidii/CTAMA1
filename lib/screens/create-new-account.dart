@@ -4,6 +4,7 @@ import 'package:CTAMA/backend/authentication_services.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:CTAMA/widgets/widgets.dart';
+import 'package:CTAMA/screens/Agriculteur-screen.dart';
 import 'package:form_field_validator/form_field_validator.dart';
 import 'package:CTAMA/screens/login-screen.dart';
 
@@ -20,12 +21,18 @@ class _CreateNewAccountState extends State<CreateNewAccount> {
   String error = '';
   GlobalKey<FormState> formkey = GlobalKey<FormState>();
 
-  void validate1() async {
+  void pushNavToDash({@required BuildContext context}) {
+    Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(builder: (cntx) => Dashboard()),
+        (dynamic route) => false);
+  }
+
+  void validate1(BuildContext context) async {
     if (formkey.currentState.validate()) {
       formkey.currentState.save();
-      authenticationService
-          .signUp(email: email, password: password)
-          .then((value) => print(value ? "success" : "fail"));
+      authenticationService.signUp(email: email, password: password).then(
+          (value) => value ? pushNavToDash(context: context) : print("FAIL"));
     } else {
       print("not validated");
     }
@@ -155,7 +162,7 @@ class _CreateNewAccountState extends State<CreateNewAccount> {
                           color: Colors.lightBlue[800],
                           shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(30.0)),
-                          onPressed: validate1,
+                          onPressed: () => validate1(context),
                           child: Text("Creer un compte"),
                           textColor: Colors.white),
                       SizedBox(

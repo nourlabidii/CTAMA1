@@ -1,10 +1,12 @@
-import 'package:CTAMA/backend/authentication_services.dart';
-import 'package:CTAMA/screens/Agriculteur-screen.dart';
+import 'package:CTAMA/screens/Admin-Panel.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:provider/provider.dart';
+import 'package:CTAMA/screens/Agriculteur-screen.dart';
+import 'package:CTAMA/screens/parcelle.dart';
+import 'package:CTAMA/screens/login-screen.dart';
+import 'backend/authentication_services.dart';
 import 'screens/screens.dart';
 
 Future<void> main() async {
@@ -38,19 +40,19 @@ class AuthenticationWrapper extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // here is the important part we
-    //will listen for user changes if user become null the screen navigate to LOgin screen else
-    // navigate to HOME PAGE and stay there until user change value to null
-    authenticationService.authStateChanges.listen((user) {
-      WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-        Navigator.pushAndRemoveUntil(
-            context,
-            MaterialPageRoute(
-                builder: (cntx) => user != null ? Homepage() : LoginScreen()),
-            (dynamic route) => false);
-      });
-    });
-
-    return Center(child: CircularProgressIndicator());
+    return authenticationService.getCurrentUser() != null
+        ? Dashboard()
+        : Loginscreen();
   }
 }
+
+/*  authenticationService.authStateChanges.listen((user) {
+      WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+        Navigator.push(
+        context, 
+        MaterialPageRoute(builder: (cntx)=>user!=null?Homepage():LoginScreen()),
+    );
+      });
+    });
+    
+    return Center(child: CircularProgressIndicator()); */

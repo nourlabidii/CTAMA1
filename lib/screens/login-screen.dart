@@ -1,31 +1,32 @@
-import 'package:CTAMA/backend/authentication_services.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:form_field_validator/form_field_validator.dart';
-import 'package:CTAMA/screens/create-new-account.dart';
+import 'package:CTAMA/backend/authentication_services.dart';
+import 'package:CTAMA/screens/Agriculteur-screen.dart';
 import 'package:CTAMA/widgets/widgets.dart';
-import 'package:CTAMA/screens/forgot-password.dart';
-import 'package:provider/provider.dart';
+import 'create-new-account.dart';
+import 'forgot-password.dart';
 
-class LoginScreen extends StatefulWidget {
-  @override
-  _LoginScreenState createState() => _LoginScreenState();
-}
+class LoginScreen extends StatelessWidget {
+  final GlobalKey<FormState> formkey = GlobalKey<FormState>();
 
-class _LoginScreenState extends State<LoginScreen> {
-  GlobalKey<FormState> formkey = GlobalKey<FormState>();
+  final AuthenticationService authenticationService = AuthenticationService();
 
-  final AuthenticationService authenticationService =
-      AuthenticationService(); // create a auth... instance here
   String email;
-  String password;
+  String pass;
 
-  void validate() async {
+  void pushNavToDash({@required BuildContext context}) {
+    Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(builder: (cntx) => Dashboard()),
+        (dynamic route) => false);
+  }
+
+  void validate(BuildContext context) async {
     if (formkey.currentState.validate()) {
       formkey.currentState.save();
-      authenticationService
-          .signIn(email: email, password: password)
-          .then((value) => print(value ? "success" : "fail"));
+      authenticationService.signIn(email: email, password: pass).then(
+          (value) => value ? pushNavToDash(context: context) : print("FAIL"));
     } else {
       print("not validated");
     }
@@ -73,12 +74,11 @@ class _LoginScreenState extends State<LoginScreen> {
                                   "Veuillez saisir une adresse mail valide"),
                         ])),
                     PasswordInput(
-                        onSaved: (String mypass) => password = mypass,
-                        icon: FontAwesomeIcons.lock,
-                        hint: 'Mot De Passe',
-                        inputAction: TextInputAction.done,
-                        validator: MinLengthValidator(6,
-                            errorText: "6 characters au minimum ")),
+                      onSaved: (String mypassword) => pass = mypassword,
+                      icon: FontAwesomeIcons.lock,
+                      hint: 'Mot De Passe',
+                      inputAction: TextInputAction.done,
+                    ),
                     GestureDetector(
                       onTap: () => Navigator.push(
                           context,
@@ -94,7 +94,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       height: 25,
                     ),
                     RaisedButton(
-                      onPressed: validate,
+                      onPressed: () => validate(context),
                       child: Text("Se Connecter"),
                     ),
                     SizedBox(
