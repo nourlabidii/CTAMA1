@@ -101,10 +101,14 @@ class _GooMapState extends State<GooMap> {
     setState(() {
       _markers.add(
         Marker(
+          draggable: true,
+          onDragEnd: (dragEndPosition) {
+            print(dragEndPosition);
+          },
+
           markerId: MarkerId('0'),
           position: LatLng(-20.131886, -47.484488),
-          infoWindow:
-              InfoWindow(title: 'Roça', snippet: 'Um bom lugar para estar'),
+          infoWindow: InfoWindow(title: 'marker', snippet: 'c' 'est un mark'),
           //icon: _markerIcon,
         ),
       );
@@ -205,7 +209,7 @@ class _GooMapState extends State<GooMap> {
                             child: AlertDialog(
                               backgroundColor: Colors.grey[900],
                               title: Text(
-                                'Choose the radius (m)',
+                                'Choisissez le rayon (m)',
                                 style: TextStyle(
                                     fontWeight: FontWeight.bold,
                                     color: Colors.white),
@@ -243,7 +247,7 @@ class _GooMapState extends State<GooMap> {
                               ],
                             ));
                       },
-                      child: Text('Circle',
+                      child: Text('Cercle',
                           style: TextStyle(
                               fontWeight: FontWeight.bold,
                               color: Colors.white)))

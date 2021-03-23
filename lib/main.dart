@@ -1,4 +1,5 @@
 import 'package:CTAMA/screens/Admin-Panel.dart';
+import 'package:CTAMA/screens/ajouter-agence.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -42,7 +43,7 @@ class AuthenticationWrapper extends StatelessWidget {
   Widget build(BuildContext context) {
     return authenticationService.getCurrentUser() != null
         ? Dashboard()
-        : Loginscreen();
+        : Ajoutagence();
   }
 }
 
