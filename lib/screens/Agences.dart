@@ -1,5 +1,8 @@
 import 'dart:collection';
+
 import 'package:flutter/cupertino.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:geocoder/geocoder.dart';
 import 'package:location/location.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -18,7 +21,11 @@ class _AgencesState extends State<Agences> {
   // Maps
   Set<Marker> _markers = HashSet<Marker>();
 
+  List<LatLng> markerLatLngs = List<LatLng>();
+
   GoogleMapController _googleMapController;
+  String searchAddr;
+
   BitmapDescriptor _markerIcon;
 
   //ids
@@ -59,35 +66,33 @@ class _AgencesState extends State<Agences> {
     });
   }
 
-  // Start the map with this marker setted up
   void _onMapCreated(GoogleMapController controller) {
     _googleMapController = controller;
+  }
 
-    setState(() {
-      _markers.add(
-        Marker(
-          draggable: true,
-          onDragEnd: (dragEndPosition) {
-            print(dragEndPosition);
-          },
-
-          markerId: MarkerId('0'),
-          position: LatLng(-20.131886, -47.484488),
-          infoWindow: InfoWindow(title: 'marker', snippet: 'c' 'est un mark'),
-          //icon: _markerIcon,
-        ),
-      );
-    });
+  Widget _undomarker() {
+    return FloatingActionButton.extended(
+      onPressed: () {
+        //Remove marker
+        setState(() {
+          _markers.clear();
+        });
+      },
+      icon: Icon(Icons.undo),
+      label: Text('Undo point'),
+      backgroundColor: Colors.orange,
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Text('Identification parcelle'),
+          title: Text('localisation agences'),
           centerTitle: true,
           backgroundColor: Colors.grey[900],
         ),
+        floatingActionButton: _undomarker(),
         body: Stack(
           children: <Widget>[
             GoogleMap(
@@ -96,17 +101,42 @@ class _AgencesState extends State<Agences> {
                       LatLng(_locationData.latitude, _locationData.longitude),
                   zoom: 16,
                 ),
-                mapType: MapType.hybrid,
                 markers: _markers,
                 myLocationEnabled: true,
                 onTap: (point) {
                   if (_isMarker) {
                     setState(() {
-                      _markers.clear();
                       _setMarkers(point);
                     });
                   }
                 }),
+            Positioned(
+                top: 30.0,
+                right: 15.0,
+                left: 15.0,
+                child: Container(
+                  height: 50.0,
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10.0),
+                      color: Colors.white),
+                  child: TextField(
+                    decoration: InputDecoration(
+                        hintText: 'Entrer adresse',
+                        border: InputBorder.none,
+                        contentPadding: EdgeInsets.only(left: 15.0, top: 15.0),
+                        suffixIcon: IconButton(
+                          icon: Icon(Icons.search),
+                          onPressed: () {},
+                          iconSize: 30.0,
+                        )),
+                    onChanged: (val) {
+                      setState(() {
+                        searchAddr = val;
+                      });
+                    },
+                  ),
+                )),
             Align(
               alignment: Alignment.bottomCenter,
               child: Row(
@@ -125,5 +155,19 @@ class _AgencesState extends State<Agences> {
             )
           ],
         ));
+  }
+  searchNavigate(){
+Geolocator().placemark
+
+  _googleMapController.animateCamera(cameraUpdate.newCameraPosition(
+    target:LaTlng(result[0].position.latitude , result[0].position.longitude),
+    zoom:10.0
+  ));
+
+
+  };
+
+
+  
   }
 }

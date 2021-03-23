@@ -44,7 +44,7 @@ class _AjoutagenceState extends State<Ajoutagence> {
     return Scaffold(
       backgroundColor: Colors.grey[800],
       appBar: AppBar(
-        title: Text('Identifiez votre parcelle'),
+        title: Text('Localisez vos agences'),
         centerTitle: true,
         backgroundColor: Colors.grey[900],
       ),
@@ -61,7 +61,7 @@ class _AjoutagenceState extends State<Ajoutagence> {
           label: Row(
             children: <Widget>[
               Text(
-                'Identifiez Parcelle',
+                'localisatiser Agences',
                 style: TextStyle(color: Colors.black87),
               ),
               Icon(
@@ -77,7 +77,7 @@ class _AjoutagenceState extends State<Ajoutagence> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             Text(
-              'Identification parcelle',
+              'localisation agence',
               textAlign: TextAlign.center,
               style: TextStyle(
                   fontSize: 24,
@@ -86,7 +86,7 @@ class _AjoutagenceState extends State<Ajoutagence> {
             ),
             SizedBox(height: 20),
             Text(
-              'veuillez identifier et preciser les frontieres de votre parcelle',
+              'veuillez identifier et localiser vos agences',
               textAlign: TextAlign.center,
               style: TextStyle(fontSize: 16, color: Colors.white),
             ),
