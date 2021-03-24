@@ -1,11 +1,15 @@
 import 'dart:collection';
-
+import 'package:CTAMA/backend/database.dart';
+import 'package:CTAMA/models/myMarker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:geocoder/geocoder.dart';
+//import 'package:geocoder/geocoder.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:location/location.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+
+import 'Saved_Agence.dart';
 
 class Agences extends StatefulWidget {
   final LocationData location;
@@ -21,13 +25,15 @@ class _AgencesState extends State<Agences> {
   // Maps
   Set<Marker> _markers = HashSet<Marker>();
 
-  List<LatLng> markerLatLngs = List<LatLng>();
+  List<LatLng> markerLatLngs = <LatLng>[];
 
   GoogleMapController _googleMapController;
+
   String searchAddr;
 
   BitmapDescriptor _markerIcon;
 
+  final DatabaseService databaseService = DatabaseService();
   //ids
 
   int _markerIdCounter = 1;
@@ -59,6 +65,13 @@ class _AgencesState extends State<Agences> {
           'Marker | Latitude: ${point.latitude}  Longitude: ${point.longitude}');
       _markers.add(
         Marker(
+          onTap: () {
+            print(" MARKER N°$markerIdVal TAPED");
+            setState(() {
+              _markers.removeWhere(
+                  (element) => element.markerId.value == markerIdVal);
+            });
+          },
           markerId: MarkerId(markerIdVal),
           position: point,
         ),
@@ -75,7 +88,7 @@ class _AgencesState extends State<Agences> {
       onPressed: () {
         //Remove marker
         setState(() {
-          _markers.clear();
+          _markers.remove(_markers.last);
         });
       },
       icon: Icon(Icons.undo),
@@ -86,8 +99,38 @@ class _AgencesState extends State<Agences> {
 
   @override
   Widget build(BuildContext context) {
+    void showSnackbar(bool isSuccess) {
+      Scaffold.of(context).showSnackBar(SnackBar(
+          content: Container(
+            child: Text(
+              isSuccess ? "Success" : "fail",
+              style: TextStyle(fontSize: 18),
+            ),
+            padding: EdgeInsets.all(15),
+          ),
+          backgroundColor: isSuccess ? Colors.green : Colors.red));
+    }
+
     return Scaffold(
         appBar: AppBar(
+          actions: [
+            IconButton(
+                onPressed: () => Navigator.of(context)
+                    .push(MaterialPageRoute(builder: (cntx) => SavedAgences())),
+                icon: Icon(Icons.save)),
+            IconButton(
+                onPressed: () async {
+                  databaseService
+                      .addMarkersToDb(Mymarker(
+                          geoPoint: _markers
+                              .toList()
+                              .map((e) => GeoPoint(
+                                  e.position.latitude, e.position.longitude))
+                              .toList()))
+                      .then((value) => showSnackbar(value));
+                },
+                icon: Icon(Icons.add))
+          ],
           title: Text('localisation agences'),
           centerTitle: true,
           backgroundColor: Colors.grey[900],
@@ -155,19 +198,5 @@ class _AgencesState extends State<Agences> {
             )
           ],
         ));
-  }
-  searchNavigate(){
-Geolocator().placemark
-
-  _googleMapController.animateCamera(cameraUpdate.newCameraPosition(
-    target:LaTlng(result[0].position.latitude , result[0].position.longitude),
-    zoom:10.0
-  ));
-
-
-  };
-
-
-  
   }
 }

@@ -1,4 +1,8 @@
 import 'dart:collection';
+import 'package:CTAMA/backend/database.dart';
+import 'package:CTAMA/models/myPolygons.dart';
+import 'package:CTAMA/screens/Saved_Agence.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:location/location.dart';
 import 'package:flutter/material.dart';
@@ -24,6 +28,7 @@ class _GooMapState extends State<GooMap> {
   Set<Circle> _circles = HashSet<Circle>();
   GoogleMapController _googleMapController;
   BitmapDescriptor _markerIcon;
+  final DatabaseService databaseService = DatabaseService();
   List<LatLng> polygonLatLngs = List<LatLng>();
   double radius;
 
@@ -131,6 +136,18 @@ class _GooMapState extends State<GooMap> {
 
   @override
   Widget build(BuildContext context) {
+    void showSnackbar(bool isSuccess) {
+      Scaffold.of(context).showSnackBar(SnackBar(
+          content: Container(
+            child: Text(
+              isSuccess ? "Success" : "fail",
+              style: TextStyle(fontSize: 18),
+            ),
+            padding: EdgeInsets.all(15),
+          ),
+          backgroundColor: isSuccess ? Colors.green : Colors.red));
+    }
+
     return Scaffold(
         appBar: AppBar(
           title: Text('Identification parcelle'),

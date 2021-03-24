@@ -35,6 +35,10 @@ class PasswordInput extends StatelessWidget {
             onSaved: onSaved,
             validator: validator,
             decoration: InputDecoration(
+              errorStyle: TextStyle(
+                  color: Colors.blue[800],
+                  fontSize: 15,
+                  fontStyle: FontStyle.normal),
               border: InputBorder.none,
               prefixIcon: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20.0),

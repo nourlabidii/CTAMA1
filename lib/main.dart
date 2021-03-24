@@ -44,7 +44,7 @@ class AuthenticationWrapper extends StatelessWidget {
   Widget build(BuildContext context) {
     return authenticationService.getCurrentUser() != null
         ? Dashboard()
-        : Ajoutagence();
+        : LoginScreen();
   }
 }
 
