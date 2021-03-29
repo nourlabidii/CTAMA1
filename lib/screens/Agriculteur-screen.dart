@@ -1,8 +1,10 @@
 import 'dart:async';
-
+import 'package:CTAMA/backend/database.dart';
 import 'package:flutter/material.dart';
 import 'package:CTAMA/backend/authentication_services.dart';
 import 'package:CTAMA/screens/screens.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:provider/provider.dart';
 
 class Dashboard extends StatefulWidget {
   Dashboard({Key key}) : super(key: key);
@@ -11,33 +13,9 @@ class Dashboard extends StatefulWidget {
   _DashboardState createState() => _DashboardState();
 }
 
-class _DashboardState extends State<Dashboard>
-    with AutomaticKeepAliveClientMixin {
+class _DashboardState extends State<Dashboard> {
   @override
-  bool get wantKeepAlive => true;
-
   final AuthenticationService authenticationService = AuthenticationService();
-  StreamSubscription userSub;
-
-  void pushNavToLoginScreen({@required BuildContext context}) {
-    Navigator.pushAndRemoveUntil(
-        context,
-        MaterialPageRoute(builder: (cntx) => LoginScreen()),
-        (dynamic route) => false);
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    userSub = authenticationService.authStateChanges
-        .listen((event) => event ?? pushNavToLoginScreen(context: context));
-  }
-
-  @override
-  void dispose() {
-    userSub.cancel();
-    super.dispose();
-  }
 
   @override
   Widget build(BuildContext context) {

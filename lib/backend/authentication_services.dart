@@ -1,20 +1,23 @@
 import 'dart:async';
+import 'package:CTAMA/backend/database.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:fluttertoast/fluttertoast.dart';
+
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class AuthenticationService {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
 
-  Stream<User> get authStateChanges => _firebaseAuth.authStateChanges();
+  Stream<User> get user {
+    return _firebaseAuth.authStateChanges();
+  }
 
 // THIS FUNCTION RETURN A BOOLEAN VALUE TRUE IF signIn get SUCCESS OTHERWISE RETURN FALSE
-  Future<bool> signIn({String email, String password}) async {
+  Future signIn({String email, String password}) async {
     try {
-      await _firebaseAuth.signInWithEmailAndPassword(
+      UserCredential result = await _firebaseAuth.signInWithEmailAndPassword(
           email: email, password: password);
-      return true;
+      return result.user;
     } on FirebaseAuthException catch (e) {
       print(e.message);
       return false;
@@ -22,11 +25,13 @@ class AuthenticationService {
   }
 
 // THIS FUNCTION RETURN A BOOLEAN VALUE TRUE IF signup SUCCESS OTHERWISE RETURN FALSE
-  Future<bool> signUp({String email, String password}) async {
+  Future signUp({String name, String email, String password}) async {
     try {
-      await _firebaseAuth.createUserWithEmailAndPassword(
-          email: email, password: password);
-      return true;
+      UserCredential result = await _firebaseAuth
+          .createUserWithEmailAndPassword(email: email, password: password);
+      User user = result.user;
+      await DatabaseService().createUserData(name, email, user.uid);
+      return user;
     } on FirebaseAuthException catch (e) {
       print(e.message);
       return false;

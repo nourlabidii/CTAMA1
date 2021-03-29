@@ -17,6 +17,7 @@ class _CreateNewAccountState extends State<CreateNewAccount> {
   var confirmPass;
   final AuthenticationService authenticationService = AuthenticationService();
   String password = '';
+  String name = '';
   String email = '';
   String error = '';
   GlobalKey<FormState> formkey = GlobalKey<FormState>();
@@ -31,8 +32,10 @@ class _CreateNewAccountState extends State<CreateNewAccount> {
   void validate1(BuildContext context) async {
     if (formkey.currentState.validate()) {
       formkey.currentState.save();
-      authenticationService.signUp(email: email, password: password).then(
-          (value) => value ? pushNavToDash(context: context) : print("FAIL"));
+      authenticationService
+          .signUp(name: name, email: email, password: password)
+          .then((value) =>
+              value ? pushNavToDash(context: context) : print("FAIL"));
     } else {
       print("not validated");
     }
@@ -104,6 +107,7 @@ class _CreateNewAccountState extends State<CreateNewAccount> {
                         hint: 'Nom et prénom',
                         inputType: TextInputType.name,
                         inputAction: TextInputAction.next,
+                        onSaved: (String myname) => name = myname,
                         validator: (input) => input.isEmpty
                             ? "veuillez saisir votre Nom et prénom"
                             : null,

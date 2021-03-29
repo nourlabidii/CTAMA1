@@ -13,7 +13,9 @@ import 'Saved_Agence.dart';
 
 class Agences extends StatefulWidget {
   final LocationData location;
-  Agences({this.location});
+  Agences({
+    this.location,
+  });
   @override
   _AgencesState createState() => _AgencesState();
 }
@@ -145,7 +147,7 @@ class _AgencesState extends State<Agences> {
                   zoom: 16,
                 ),
                 markers: _markers,
-                myLocationEnabled: true,
+                myLocationEnabled: false,
                 onTap: (point) {
                   if (_isMarker) {
                     setState(() {

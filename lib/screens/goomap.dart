@@ -1,7 +1,7 @@
 import 'dart:collection';
 import 'package:CTAMA/backend/database.dart';
-import 'package:CTAMA/models/myPolygons.dart';
-import 'package:CTAMA/screens/Saved_Agence.dart';
+import 'package:CTAMA/models/parcelle_poly.dart';
+import 'package:CTAMA/screens/Saved_Parcelle.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:location/location.dart';
@@ -22,13 +22,14 @@ class _GooMapState extends State<GooMap> {
   // Location
   LocationData _locationData;
 
+  final DatabaseService databaseService = DatabaseService();
   // Maps
   Set<Marker> _markers = HashSet<Marker>();
-  Set<Polygon> _polygons = HashSet<Polygon>();
+  Set<Polygon> _myPolySet;
+  Polygon myPolygon;
   Set<Circle> _circles = HashSet<Circle>();
   GoogleMapController _googleMapController;
   BitmapDescriptor _markerIcon;
-  final DatabaseService databaseService = DatabaseService();
   List<LatLng> polygonLatLngs = List<LatLng>();
   double radius;
 
@@ -58,14 +59,18 @@ class _GooMapState extends State<GooMap> {
 
   // Draw Polygon to the map
   void _setPolygon() {
-    final String polygonIdVal = 'polygon_id_$_polygonIdCounter';
-    _polygons.add(Polygon(
-      polygonId: PolygonId(polygonIdVal),
+    myPolygon = Polygon(
+      polygonId: PolygonId("1"),
       points: polygonLatLngs,
       strokeWidth: 2,
       strokeColor: Colors.yellow,
       fillColor: Colors.yellow.withOpacity(0.15),
-    ));
+    );
+    if (myPolygon != null) {
+      _myPolySet = HashSet<Polygon>()..add(myPolygon);
+    } else {
+      _myPolySet = HashSet<Polygon>();
+    }
   }
 
   // Set circles as points to the map
@@ -136,18 +141,6 @@ class _GooMapState extends State<GooMap> {
 
   @override
   Widget build(BuildContext context) {
-    void showSnackbar(bool isSuccess) {
-      Scaffold.of(context).showSnackBar(SnackBar(
-          content: Container(
-            child: Text(
-              isSuccess ? "Success" : "fail",
-              style: TextStyle(fontSize: 18),
-            ),
-            padding: EdgeInsets.all(15),
-          ),
-          backgroundColor: isSuccess ? Colors.green : Colors.red));
-    }
-
     return Scaffold(
         appBar: AppBar(
           title: Text('Identification parcelle'),
@@ -166,7 +159,7 @@ class _GooMapState extends State<GooMap> {
               mapType: MapType.hybrid,
               markers: _markers,
               circles: _circles,
-              polygons: _polygons,
+              polygons: _myPolySet ?? HashSet<Polygon>(),
               myLocationEnabled: true,
               onTap: (point) {
                 if (_isPolygon) {
@@ -223,46 +216,47 @@ class _GooMapState extends State<GooMap> {
                         radius = 50;
                         return showDialog(
                             context: context,
-                            child: AlertDialog(
-                              backgroundColor: Colors.grey[900],
-                              title: Text(
-                                'Choisissez le rayon (m)',
-                                style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.white),
-                              ),
-                              content: Padding(
-                                  padding: EdgeInsets.all(8),
-                                  child: Material(
-                                    color: Colors.black,
-                                    child: TextField(
-                                      style: TextStyle(
-                                          fontSize: 16, color: Colors.white),
-                                      decoration: InputDecoration(
-                                        icon: Icon(Icons.zoom_out_map),
-                                        hintText: 'Ex: 100',
-                                        suffixText: 'meters',
-                                      ),
-                                      keyboardType:
-                                          TextInputType.numberWithOptions(),
-                                      onChanged: (input) {
-                                        setState(() {
-                                          radius = double.parse(input);
-                                        });
-                                      },
-                                    ),
-                                  )),
-                              actions: <Widget>[
-                                FlatButton(
-                                    onPressed: () => Navigator.pop(context),
-                                    child: Text(
-                                      'Ok',
-                                      style: TextStyle(
+                            builder: (cntx) => AlertDialog(
+                                  backgroundColor: Colors.grey[900],
+                                  title: Text(
+                                    'Choisissez le rayon (m)',
+                                    style: TextStyle(
                                         fontWeight: FontWeight.bold,
-                                      ),
-                                    )),
-                              ],
-                            ));
+                                        color: Colors.white),
+                                  ),
+                                  content: Padding(
+                                      padding: EdgeInsets.all(8),
+                                      child: Material(
+                                        color: Colors.black,
+                                        child: TextField(
+                                          style: TextStyle(
+                                              fontSize: 16,
+                                              color: Colors.white),
+                                          decoration: InputDecoration(
+                                            icon: Icon(Icons.zoom_out_map),
+                                            hintText: 'Ex: 100',
+                                            suffixText: 'meters',
+                                          ),
+                                          keyboardType:
+                                              TextInputType.numberWithOptions(),
+                                          onChanged: (input) {
+                                            setState(() {
+                                              radius = double.parse(input);
+                                            });
+                                          },
+                                        ),
+                                      )),
+                                  actions: <Widget>[
+                                    FlatButton(
+                                        onPressed: () => Navigator.pop(context),
+                                        child: Text(
+                                          'Ok',
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        )),
+                                  ],
+                                ));
                       },
                       child: Text('Cercle',
                           style: TextStyle(

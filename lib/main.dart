@@ -1,6 +1,6 @@
 import 'package:CTAMA/screens/Admin-Panel.dart';
 import 'package:CTAMA/screens/ajouter-agence.dart';
-
+import 'package:provider/provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -22,15 +22,18 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'CTAMA',
-      theme: ThemeData(
-        textTheme:
-            GoogleFonts.josefinSansTextTheme(Theme.of(context).textTheme),
-        primarySwatch: Colors.blue,
-        visualDensity: VisualDensity.adaptivePlatformDensity,
+    return StreamProvider<User>.value(
+      value: AuthenticationService().user,
+      child: MaterialApp(
+        title: 'CTAMA',
+        theme: ThemeData(
+          textTheme:
+              GoogleFonts.josefinSansTextTheme(Theme.of(context).textTheme),
+          primarySwatch: Colors.blue,
+          visualDensity: VisualDensity.adaptivePlatformDensity,
+        ),
+        home: AuthenticationWrapper(),
       ),
-      home: AuthenticationWrapper(),
     );
   }
 }
@@ -42,9 +45,13 @@ class AuthenticationWrapper extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return authenticationService.getCurrentUser() != null
-        ? Dashboard()
-        : LoginScreen();
+    final user = Provider.of<User>(context);
+
+    if (user != null) {
+      return Dashboard();
+    } else {
+      return Admin();
+    }
   }
 }
 

@@ -1,24 +1,36 @@
 import 'package:CTAMA/models/myMarker.dart';
-import 'package:CTAMA/models/myPolygons.dart';
+import 'package:CTAMA/models/parcelle_poly.dart';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class DatabaseService {
-  final CollectionReference ctamaCollection =
-      FirebaseFirestore.instance.collection('Ctama');
+  final CollectionReference profileList =
+      FirebaseFirestore.instance.collection('Users');
   final CollectionReference markersCollection =
       FirebaseFirestore.instance.collection('Markers');
-  final CollectionReference polygonsCollection =
-      FirebaseFirestore.instance.collection('Polygons');
-  final String uid;
+  final CollectionReference parcelleCollection =
+      FirebaseFirestore.instance.collection('Parcelle');
 
-  DatabaseService({this.uid});
-
-  Future updateUserData(String name, int role, String email) async {
-    return await ctamaCollection.doc(uid).set({
+  Future<void> createUserData(String name, String email, String uid) async {
+    return await profileList.doc(uid).set({
       'name': name,
-      'role': role,
       'email': email,
     });
+  }
+
+  Future getUsersList() async {
+    List itemsList = [];
+
+    try {
+      await profileList.get().then((querySnapshot) {
+        querySnapshot.docs.forEach((element) {
+          itemsList.add(element.data);
+        });
+      });
+      return itemsList;
+    } catch (e) {
+      print(e);
+    }
   }
 
   Future<bool> addMarkersToDb(Mymarker mymarker) async {
@@ -35,9 +47,9 @@ class DatabaseService {
     return markersCollection.snapshots();
   }
 
-  Future<bool> addPolygonsToDb(MyPolygon mypolygon) async {
+  Future<bool> addParcelleToDB(MyPpolygon myPpolygon) async {
     try {
-      await markersCollection.doc().set(mypolygon.toMap(mypolygon));
+      await parcelleCollection.doc().set(myPpolygon.toMap(myPpolygon));
       return true;
     } catch (e) {
       print(e);
@@ -45,7 +57,7 @@ class DatabaseService {
     }
   }
 
-  Stream<QuerySnapshot> getPolygonsStream() {
-    return polygonsCollection.snapshots();
+  Stream<QuerySnapshot> getSavedParcelles() {
+    return parcelleCollection.snapshots();
   }
 }

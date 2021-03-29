@@ -1,6 +1,31 @@
+import 'package:CTAMA/backend/database.dart';
 import 'package:flutter/material.dart';
 
-class Admin extends StatelessWidget {
+class Admin extends StatefulWidget {
+  @override
+  _AdminState createState() => _AdminState();
+}
+
+class _AdminState extends State<Admin> {
+  List userProfilesList = [];
+
+  @override
+  initState() {
+    super.initState();
+    fetchDatabaseList();
+  }
+
+  fetchDatabaseList() async {
+    dynamic resultant = await DatabaseService().getUsersList();
+    if (resultant == null) {
+      print('unable to retrieve');
+    } else {
+      setState(() {
+        userProfilesList = resultant;
+      });
+    }
+  }
+
   Widget _buildsinglecontainer(
       {IconData icon, int count, String name, BuildContext context}) {
     return Card(
@@ -141,63 +166,16 @@ class Admin extends StatelessWidget {
               ),
             ),
             Container(
-              child: Column(children: <Widget>[
-                Row(
-                  children: <Widget>[
-                    Container(
-                      color: Colors.orange[800],
-                      margin:
-                          EdgeInsets.symmetric(vertical: 20, horizontal: 10),
-                      padding:
-                          EdgeInsets.symmetric(vertical: 10, horizontal: 10),
-                      child: FlatButton.icon(
-                        icon: Icon(
-                          Icons.person,
-                          color: Colors.blue[900],
-                        ),
-                        onPressed: () {},
-                        label: Text(
-                          'Manage Agents accounts',
-                          style: TextStyle(
-                              fontSize: 13,
-                              color: Colors.blue,
-                              fontWeight: FontWeight.bold),
-                        ),
+              child: ListView.builder(
+                  itemCount: userProfilesList.length,
+                  itemBuilder: (context, index) {
+                    return Card(
+                      child: ListTile(
+                        title: Text(userProfilesList[index]['name']),
+                        subtitle: Text(userProfilesList[index]['email']),
                       ),
-                    ),
-                    SizedBox(
-                      width: 2,
-                    ),
-                    RaisedButton(
-                      child: Icon(Icons.admin_panel_settings),
-                    )
-                  ],
-                ),
-                Row(
-                  children: <Widget>[
-                    Container(
-                      color: Colors.orange[800],
-                      margin: EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-                      padding:
-                          EdgeInsets.symmetric(vertical: 10, horizontal: 10),
-                      child: FlatButton.icon(
-                        icon: Icon(
-                          Icons.person,
-                          color: Colors.blue[900],
-                        ),
-                        onPressed: () {},
-                        label: Text(
-                          'Manage Experts account',
-                          style: TextStyle(
-                              fontSize: 13,
-                              color: Colors.blue,
-                              fontWeight: FontWeight.bold),
-                        ),
-                      ),
-                    )
-                  ],
-                ),
-              ]),
+                    );
+                  }),
             ),
           ]),
         ),
