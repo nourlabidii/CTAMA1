@@ -1,13 +1,18 @@
 import 'package:CTAMA/screens/Admin-Panel.dart';
+import 'package:CTAMA/screens/Agent/Agences.dart';
+import 'package:CTAMA/screens/Agent/Agent-panel.dart';
 import 'package:CTAMA/screens/ajouter-agence.dart';
-import 'package:provider/provider.dart';
+import 'package:CTAMA/screens/goomap.dart';
+import 'package:CTAMA/screens/rapport.dart';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+
 import 'package:CTAMA/screens/Agriculteur-screen.dart';
 import 'package:CTAMA/screens/parcelle.dart';
 import 'package:CTAMA/screens/login-screen.dart';
+
 import 'backend/authentication_services.dart';
 import 'screens/screens.dart';
 
@@ -22,18 +27,13 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return StreamProvider<User>.value(
-      value: AuthenticationService().user,
-      child: MaterialApp(
-        title: 'CTAMA',
-        theme: ThemeData(
-          textTheme:
-              GoogleFonts.josefinSansTextTheme(Theme.of(context).textTheme),
-          primarySwatch: Colors.blue,
-          visualDensity: VisualDensity.adaptivePlatformDensity,
-        ),
-        home: AuthenticationWrapper(),
+    return MaterialApp(
+      title: 'CTAMA',
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+        visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
+      home: AuthenticationWrapper(),
     );
   }
 }
@@ -45,13 +45,9 @@ class AuthenticationWrapper extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final user = Provider.of<User>(context);
-
-    if (user != null) {
-      return Dashboard();
-    } else {
-      return Admin();
-    }
+    return authenticationService.getCurrentUser() != null
+        ? Dashboard()
+        : LoginScreen();
   }
 }
 

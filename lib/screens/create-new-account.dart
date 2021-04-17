@@ -1,11 +1,15 @@
 import 'dart:ui';
 
 import 'package:CTAMA/backend/authentication_services.dart';
+import 'package:CTAMA/models/user.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:CTAMA/widgets/widgets.dart';
 import 'package:CTAMA/screens/Agriculteur-screen.dart';
 import 'package:form_field_validator/form_field_validator.dart';
+import 'package:CTAMA/backend/database.dart';
 import 'package:CTAMA/screens/login-screen.dart';
 
 class CreateNewAccount extends StatefulWidget {
@@ -16,6 +20,7 @@ class CreateNewAccount extends StatefulWidget {
 class _CreateNewAccountState extends State<CreateNewAccount> {
   var confirmPass;
   final AuthenticationService authenticationService = AuthenticationService();
+  final DatabaseService databaseService = DatabaseService();
   String password = '';
   String name = '';
   String email = '';
@@ -32,6 +37,7 @@ class _CreateNewAccountState extends State<CreateNewAccount> {
   void validate1(BuildContext context) async {
     if (formkey.currentState.validate()) {
       formkey.currentState.save();
+
       authenticationService
           .signUp(name: name, email: email, password: password)
           .then((value) =>
@@ -39,6 +45,23 @@ class _CreateNewAccountState extends State<CreateNewAccount> {
     } else {
       print("not validated");
     }
+  }
+
+  TextEditingController nameController = TextEditingController();
+  int _radioValue = 0;
+  void handleRadioValueChange(int value) {
+    setState(() {
+      _radioValue = value;
+
+      switch (_radioValue) {
+        case 0:
+          break;
+        case 1:
+          break;
+        case 2:
+          break;
+      }
+    });
   }
 
   @override
@@ -159,6 +182,47 @@ class _CreateNewAccountState extends State<CreateNewAccount> {
                           }),
                       SizedBox(
                         height: 25,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Radio(
+                            value: 0,
+                            groupValue: _radioValue,
+                            onChanged: handleRadioValueChange,
+                          ),
+                          Text(
+                            'Agriculteur',
+                            style: TextStyle(
+                                fontSize: 13.0,
+                                color: Colors.white,
+                                fontFamily: 'home'),
+                          ),
+                          Radio(
+                            value: 1,
+                            groupValue: _radioValue,
+                            onChanged: handleRadioValueChange,
+                          ),
+                          Text(
+                            'Agent',
+                            style: TextStyle(
+                                fontSize: 13.0,
+                                color: Colors.white,
+                                fontFamily: 'home'),
+                          ),
+                          Radio(
+                            value: 2,
+                            groupValue: _radioValue,
+                            onChanged: handleRadioValueChange,
+                          ),
+                          Text(
+                            'Expert',
+                            style: TextStyle(
+                                fontSize: 13.0,
+                                color: Colors.white,
+                                fontFamily: 'home'),
+                          ),
+                        ],
                       ),
                       RaisedButton(
                           padding: EdgeInsets.symmetric(

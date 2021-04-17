@@ -31,7 +31,7 @@ class AuthenticationService {
           .createUserWithEmailAndPassword(email: email, password: password);
       User user = result.user;
       await DatabaseService().createUserData(name, email, user.uid);
-      return user;
+      return true;
     } on FirebaseAuthException catch (e) {
       print(e.message);
       return false;

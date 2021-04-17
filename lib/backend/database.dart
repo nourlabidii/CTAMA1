@@ -1,7 +1,8 @@
 import 'package:CTAMA/models/myMarker.dart';
 import 'package:CTAMA/models/parcelle_poly.dart';
-
+import 'package:CTAMA/models/user.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class DatabaseService {
   final CollectionReference profileList =
@@ -10,6 +11,14 @@ class DatabaseService {
       FirebaseFirestore.instance.collection('Markers');
   final CollectionReference parcelleCollection =
       FirebaseFirestore.instance.collection('Parcelle');
+
+  Future<void> userSetup(String displayName) async {
+    FirebaseAuth auth = FirebaseAuth.instance;
+    String uid = auth.currentUser.uid.toString();
+
+    profileList.add({'name': displayName, 'uid': uid});
+    return;
+  }
 
   Future<void> createUserData(String name, String email, String uid) async {
     return await profileList.doc(uid).set({
@@ -30,6 +39,16 @@ class DatabaseService {
       return itemsList;
     } catch (e) {
       print(e);
+    }
+  }
+
+  Future<bool> addUsersToDb(Myuser myuser) async {
+    try {
+      await profileList.doc().set(myuser.toMap(myuser));
+      return true;
+    } catch (e) {
+      print(e);
+      return false;
     }
   }
 

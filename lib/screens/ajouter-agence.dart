@@ -1,7 +1,6 @@
-import 'package:CTAMA/screens/Agences.dart';
+import 'package:CTAMA/screens/Agent/Agences.dart';
 import 'package:flutter/material.dart';
 import 'package:location/location.dart';
-import 'package:CTAMA/screens/Agences.dart';
 
 class Ajoutagence extends StatefulWidget {
   @override
@@ -61,7 +60,7 @@ class _AjoutagenceState extends State<Ajoutagence> {
           label: Row(
             children: <Widget>[
               Text(
-                'localisatiser Agences',
+                'localiser Agences',
                 style: TextStyle(color: Colors.black87),
               ),
               Icon(

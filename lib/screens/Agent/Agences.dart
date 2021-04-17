@@ -1,8 +1,9 @@
 import 'dart:collection';
 import 'package:CTAMA/backend/database.dart';
 import 'package:CTAMA/models/myMarker.dart';
+
 import 'package:flutter/cupertino.dart';
-import 'package:geolocator/geolocator.dart';
+//import 'package:geolocator/geolocator.dart';
 //import 'package:geocoder/geocoder.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:location/location.dart';
@@ -13,6 +14,7 @@ import 'Saved_Agence.dart';
 
 class Agences extends StatefulWidget {
   final LocationData location;
+
   Agences({
     this.location,
   });
@@ -102,7 +104,7 @@ class _AgencesState extends State<Agences> {
   @override
   Widget build(BuildContext context) {
     void showSnackbar(bool isSuccess) {
-      Scaffold.of(context).showSnackBar(SnackBar(
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           content: Container(
             child: Text(
               isSuccess ? "Success" : "fail",
@@ -166,13 +168,14 @@ class _AgencesState extends State<Agences> {
                       borderRadius: BorderRadius.circular(10.0),
                       color: Colors.white),
                   child: TextField(
+                    onTap: () {},
                     decoration: InputDecoration(
                         hintText: 'Entrer adresse',
                         border: InputBorder.none,
                         contentPadding: EdgeInsets.only(left: 15.0, top: 15.0),
                         suffixIcon: IconButton(
                           icon: Icon(Icons.search),
-                          onPressed: () {},
+                          onPressed: () async {},
                           iconSize: 30.0,
                         )),
                     onChanged: (val) {
